@@ -23,8 +23,8 @@ bin/
 gen/
 
 # test files
-*/androidTest/
-*/test/
+/*/src/androidTest/
+/*/src/test/
 
 # Gradle files
 .gradle/

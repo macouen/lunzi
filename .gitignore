@@ -21,7 +21,11 @@ captures/
 # Generated files
 bin/
 gen/
- 
+
+# test files
+/*/androidTest/
+/*/test/
+
 # Gradle files
 .gradle/
 build/

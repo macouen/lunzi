@@ -80,3 +80,11 @@ $RECYCLE.BIN/
 *.msi
 *.msm
 *.msp
+
+
+# =========================
+# Custom Files
+# =========================
+
+viewdemo/
+location/

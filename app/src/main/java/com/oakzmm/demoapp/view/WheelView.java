@@ -8,6 +8,7 @@ import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -151,6 +152,7 @@ public class WheelView extends ScrollView {
     private void initData() {
         displayItemCount = offset * 2 + 1;
         selectedIndex = offset;
+        views.removeAllViews();
         for (String item : items) {
             views.addView(createView(item));
         }
@@ -168,10 +170,12 @@ public class WheelView extends ScrollView {
                 }
             });
         }
+//        views.postInvalidateDelayed(500);
+//        init(context);
     }
 
     private TextView createView(String item) {
-        TextView tv = new TextView(context);
+        final TextView tv = new TextView(context);
         tv.setLayoutParams(new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -191,6 +195,7 @@ public class WheelView extends ScrollView {
             this.setLayoutParams(new LinearLayout.LayoutParams(lp.width,
                     itemHeight * displayItemCount));
         }
+        Log.i(TAG,tv.getText().toString());
         return tv;
     }
 

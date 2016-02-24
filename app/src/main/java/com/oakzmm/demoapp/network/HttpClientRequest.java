@@ -96,22 +96,21 @@ public class HttpClientRequest {
         params.put("param2", param2);
 
         CustomRequest request = new CustomRequest.RequestBuilder()
-//                .post()//不设置的话默认GET 但是设置了参数就不需要了。。。
+                .post()//不设置的话默认GET 但是设置了参数就不需要了。。。
                 .url("")//url会统一配置到requestUrl类中 必填
-                .addMethodParams("") //请求的方法名,key为“method”（注意，如果使用map集合的方式，请勿使用重复此方法）
                         // 添加参数方法1 适用参数比较多的情况下
-//                .params(params)
+//               .params(params)
                         // 添加参数方法2
                 .addParams("param1", param1)//添加参数1
                 .addParams("param2", param2)//添加参数2
-//                .clazz(Test.calss) //如果设置了返回类型，会自动解析返回model(Gson解析) 如果不设置会直接返回json数据;
+//               .clazz(Test.calss) //如果设置了返回类型，会自动解析返回model(Gson解析) 如果不设置会直接返回json数据;
                 .successListener(listener)//获取数据成功的listener
                 .errorListener(errorListener)//获取数据异常的listener
+//              .JSON() //使用json数据请求
                 .build();
         addRequest(request, tag);
         //将请求add到队列中。并设置tag  并需要相应activity onStop方法中调用cancel方法
     }
-
     //Demo
     public void getWeatherData(Response.Listener listener,
                                Response.ErrorListener errorListener, String tag) {

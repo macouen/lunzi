@@ -92,7 +92,7 @@ public class BitmapUtil {
         if (height > reqHeight || width > reqWidth) {
             final int heightRatio = Math.round((float) height / (float) reqHeight);
             final int widthRatio = Math.round((float) width / (float) reqWidth);
-            AprilLog.i("heightRatio:" + ((float) height / (float) reqHeight)
+            OakLog.i("heightRatio:" + ((float) height / (float) reqHeight)
                     + "\nwidthRatio:" + ((float) width / (float) reqWidth));
 //            inSampleSize = heightRatio > widthRatio ? heightRatio : widthRatio;
             //去缩放更小的那个：

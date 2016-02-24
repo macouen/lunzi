@@ -10,8 +10,8 @@ import java.lang.reflect.Method;
 /**
  * 自定义Log工具，可以Debug和Release控制。
  */
-public class AprilLog {
-    private static final String TAG = "AprilL";
+public class OakLog {
+    private static final String TAG = "LogUtil";
     private static boolean ENABLE_DEBUG_LOGGING = true;
     private static boolean ENABLE_CRASHLYTICS_LOGGING = false;
     private static Method CRASHLYTICS_LOG_METHOD;

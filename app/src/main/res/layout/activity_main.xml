@@ -4,18 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
-
-    <com.oakzmm.demoapp.view.WheelView
-        android:id="@+id/wheelView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    tools:context=".activity.MainActivity">
 
     <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:text="next" />
+        android:id="@+id/btn_wheelView"
+        style="@style/btn_main"
+        android:text="WheelView" />
+
+    <Button
+        android:id="@+id/btn_Interpolator"
+        style="@style/btn_main"
+        android:text="Interpolator" />
+
+    <Button
+        android:id="@+id/btn_QR_code"
+        style="@style/btn_main"
+        android:text="QR code" />
 </LinearLayout>

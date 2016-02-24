@@ -5,9 +5,13 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.oakzmm.demoapp.utils.OakLog;
+
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -20,12 +24,21 @@ import java.util.Map;
  * Description: customVolleyRequest
  */
 public class CustomRequest<T> extends Request<T> {
+    /**
+     * Default charset for JSON request.
+     */
+    protected static final String PROTOCOL_CHARSET = "utf-8";
+    /**
+     * Content type for request.
+     */
+    private static final String PROTOCOL_CONTENT_TYPE =
+            String.format("application/json; charset=%s", PROTOCOL_CHARSET);
     private final Gson gson = new Gson();
     private final Class<T> clazz;
     private final Map<String, String> headers;
     private final Response.Listener<T> listener;
+    private final String mRequestBody;
     private Map<String, String> params;
-
 
     /**
      * Make a GET request and return a parsed object from JSON.
@@ -41,6 +54,7 @@ public class CustomRequest<T> extends Request<T> {
         this.headers = null;
         this.params = params;
         this.listener = listener;
+        this.mRequestBody = null;
     }
 
     /**
@@ -58,6 +72,17 @@ public class CustomRequest<T> extends Request<T> {
         this.headers = headers;
         this.params = params;
         this.listener = listener;
+        this.mRequestBody = null;
+    }
+
+    public CustomRequest(int method, String url, Class<T> clazz, String requestBody, Response.Listener<T> listener,
+                         Response.ErrorListener errorListener) {
+        super(method, url, errorListener);
+        this.clazz = clazz;
+        this.headers = null;
+        this.params = null;
+        this.listener = listener;
+        this.mRequestBody = requestBody;
     }
 
     /**
@@ -68,9 +93,29 @@ public class CustomRequest<T> extends Request<T> {
         clazz = builder.clazz;
         headers = builder.headers;
         listener = builder.successListener;
-        params = builder.params;
+        mRequestBody = builder.requestBody;
+        if (mRequestBody != null) {
+            params = null;
+        } else {
+            params = builder.params;
+        }
     }
 
+    @Override
+    public String getBodyContentType() {
+        return PROTOCOL_CONTENT_TYPE;
+    }
+
+    @Override
+    public byte[] getBody() {
+        try {
+            return mRequestBody == null ? null : mRequestBody.getBytes(PROTOCOL_CHARSET);
+        } catch (UnsupportedEncodingException uee) {
+            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s",
+                    mRequestBody, PROTOCOL_CHARSET);
+            return null;
+        }
+    }
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
@@ -86,7 +131,6 @@ public class CustomRequest<T> extends Request<T> {
     protected void deliverResponse(T response) {
         listener.onResponse(response);
     }
-
 
     @Override
     protected Response<T> parseNetworkResponse(NetworkResponse response) {
@@ -111,7 +155,7 @@ public class CustomRequest<T> extends Request<T> {
     }
 
     /**
-     * requestBiulder  使用方法参见httpClientRequest
+     * requestBuilder  使用方法参见httpClientRequest
      */
     public static class RequestBuilder {
         private int method = Method.GET;
@@ -121,6 +165,7 @@ public class CustomRequest<T> extends Request<T> {
         private Response.ErrorListener errorListener;
         private Map<String, String> headers;
         private Map<String, String> params;
+        private String requestBody;
 
         public RequestBuilder url(String url) {
             this.url = url;
@@ -179,12 +224,15 @@ public class CustomRequest<T> extends Request<T> {
             return this;
         }
 
-        public RequestBuilder addMethodParams(String method) {
+        public RequestBuilder JSON() {
+            final JSONObject jsonObject;
             if (params == null) {
-                params = new HashMap<>();
-                post();
+                jsonObject = null;
+            } else {
+                jsonObject = new JSONObject(params);
             }
-            params.put("method", method);
+            requestBody = (jsonObject == null) ? null : jsonObject.toString();
+            OakLog.d(requestBody);
             return this;
         }
 

@@ -15,7 +15,7 @@
 
 > Bitmap处理工具 1. 旋转图片 2. 压缩图片（处理大图）3. 处理成圆角图 4. 处理成圆形图
 
-#### AprilLog.java 
+#### OakLog.java 
 
 > 自定义Log工具，可以Debug和Release控制。
 

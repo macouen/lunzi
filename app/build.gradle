@@ -30,4 +30,5 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.5.0'
     compile 'com.squareup.okio:okio:1.6.0'
     compile 'com.google.code.gson:gson:2.3.1'
+    compile files('libs/core-3.2.1.jar')
 }

@@ -48,13 +48,15 @@
 ###   network -- 网络请求模块
 > 个人作品，文章介绍：[使用okHttp、Volley、Gson快速组装HttpClient](http://oakzmm.com/2015/07/22/okHttp-Volley-Gson/)  
 
-> 2016-02-24  更新：添加 使用`json`格式的`post`请求，使用方法见demo。  
+> 2016-02-24  更新：添加 转换params为`json`格式的`post`请求，使用方法见demo。  
+> 2016-03-29  更新：添加 直接使用`json`格式的数据请求。  
+> 2016-03-29  更新：添加 使用okHttp封装文件上传的Request，并添加progress 回调，具体使用请见 `UploadFileRequest.java`。
 
 ### zxing -- 二维码扫描
 > 使用zxing实现的二维码扫描模块，修复了横竖屏以及预览界面图像拉伸的bug，优化了扫描界面的UI，仿微信二维码. 
 
 > 使用注意  
-> 需要复制`/values `下的`ids`文件，以及`colors`和`trings`文件中zxing部分的代码；  
+> 需要复制`/values `下的`ids`文件，以及`colors`和`strings`文件中zxing部分的代码；  
 > 添加相机权限；  
 > 复制后，注意 `CaptureActivity`和`ViewfinderView`的包名。    
 
@@ -74,6 +76,22 @@
 #### `AnimationController.java` 
 
 > 自己看。。。
+
+#### `CommonUtil.java` 
+
+> 常用的一些方法，如验证邮箱/手机号码（正则）、检测网络类型、获取设备信息、获取APP版本号版本名称、根据包名启动应用等~
+
+#### `Md5Util.java`
+
+> 字符串、文件MD5加密
+
+#### `TimeUtil.java`
+
+> 获取常见的时间格式，具体请见。
+
+#### `HexUtil.java`
+
+> 16进制值与String/Byte之间的转换
 
 #### view -- 自定义View
 

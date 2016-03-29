@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * MyApplication
+ * DemoApp
  * Created by acer_april
  * on 2015/7/20
  * Description: httpRequest
@@ -106,7 +106,8 @@ public class HttpClientRequest {
 //               .clazz(Test.calss) //如果设置了返回类型，会自动解析返回model(Gson解析) 如果不设置会直接返回json数据;
                 .successListener(listener)//获取数据成功的listener
                 .errorListener(errorListener)//获取数据异常的listener
-//              .JSON() //使用json数据请求
+//              .toJSON() //将add的params 转成json数据请求
+//                .JSONString(json) // 直接添加jsonString 为 requestBody，！！！不能再同时使用addParams/params的方法
                 .build();
         addRequest(request, tag);
         //将请求add到队列中。并设置tag  并需要相应activity onStop方法中调用cancel方法

@@ -9,7 +9,6 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.oakzmm.demoapp.utils.OakLog;
 
 import org.json.JSONObject;
 
@@ -18,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * MyApplication
+ * DemoApp
  * Created by acer_april
  * on 2015/7/20
  * Description: customVolleyRequest
@@ -224,7 +223,7 @@ public class CustomRequest<T> extends Request<T> {
             return this;
         }
 
-        public RequestBuilder JSON() {
+        public RequestBuilder toJSON() {
             final JSONObject jsonObject;
             if (params == null) {
                 jsonObject = null;
@@ -232,7 +231,12 @@ public class CustomRequest<T> extends Request<T> {
                 jsonObject = new JSONObject(params);
             }
             requestBody = (jsonObject == null) ? null : jsonObject.toString();
-            OakLog.d(requestBody);
+            return this;
+        }
+
+        public RequestBuilder JSONString(String jsonBody) {
+            requestBody = jsonBody;
+            post();
             return this;
         }
 

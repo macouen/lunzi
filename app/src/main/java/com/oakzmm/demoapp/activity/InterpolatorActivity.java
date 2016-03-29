@@ -78,11 +78,11 @@ public class InterpolatorActivity extends AppCompatActivity {
                         break;
                     case 8:
                         animation.setDuration(2400);
-                        animation.setInterpolator(new DampingInterpolator(5,0.8f));
+                        animation.setInterpolator(new DampingInterpolator(3, 0.8f));
                         break;
                     case 9:
                         animation.setDuration(1500);
-                        animation.setInterpolator(new BezierInterpolator(.53f,-0.52f,.75f,-0.51f));
+                        animation.setInterpolator(new BezierInterpolator(.53f, -0.52f, .75f, -0.51f));
 //                        animation.setInterpolator( new BezierInterpolator(0.0f, 1.56f,1.0f, -0.67f));
                         break;
                     case 10:

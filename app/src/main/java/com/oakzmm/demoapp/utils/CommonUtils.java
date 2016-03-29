@@ -228,18 +228,7 @@ public class CommonUtils {
         return "";
     }
 
-    /**
-     * 修改文件的权限,例如"777"等
-     */
-    public static void chmod(String path, String mode) {
-        try {
-            String command = "chmod " + mode + " " + path;
-            Runtime runtime = Runtime.getRuntime();
-            runtime.exec(command);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+
 
     public static Bitmap readBitmapFromAssets(Context context, String path) {
         Bitmap bmp = null;

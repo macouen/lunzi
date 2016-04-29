@@ -50,11 +50,12 @@
 
 > 2016-02-24  更新：添加 转换params为`json`格式的`post`请求，使用方法见demo。  
 > 2016-03-29  更新：添加 直接使用`json`格式的数据请求。  
-> 2016-03-29  更新：添加 使用okHttp封装文件上传的Request，并添加progress 回调，具体使用请见 `UploadFileRequest.java`。
+> 2016-03-29  更新：添加 使用okHttp封装文件上传的Request，并添加**progress 回调**，具体使用请见 `UploadFileRequest.java`。
+> 2016-04-29  更新：优化 文件上传方法，修复 存在的可能导致**内存泄露**的问题。
 
 ### zxing -- 二维码扫描
 > 使用zxing实现的二维码扫描模块，修复了横竖屏以及预览界面图像拉伸的bug，优化了扫描界面的UI，仿微信二维码. 
-
+>
 > 使用注意  
 > 需要复制`/values `下的`ids`文件，以及`colors`和`strings`文件中zxing部分的代码；  
 > 添加相机权限；  

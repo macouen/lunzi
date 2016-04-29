@@ -2,9 +2,11 @@ package com.oakzmm.demoapp.activity;
 
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -54,12 +56,18 @@ public class CaptureActivity extends AppCompatActivity implements Callback {
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setTheme(android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen);
+//        setTheme(android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_capture);
         //初始化 CameraManager
         CameraManager.init(getApplication());
-
+        if (Build.VERSION.SDK_INT >= 21) {
+            try {
+                getWindow().setStatusBarColor(Color.DKGRAY);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
         txtResult = (TextView) findViewById(R.id.txtResult);
         hasSurface = false;
@@ -160,7 +168,7 @@ public class CaptureActivity extends AppCompatActivity implements Callback {
         viewfinderView.drawResultBitmap(barcode);
         playBeepSoundAndVibrate();
         //  处理识别的二维码信息
-        txtResult.setText(obj.getBarcodeFormat().toString() + ":" + resultText);
+        txtResult.setText(obj.getBarcodeFormat().toString() + ":\n" + resultText);
 
 
     }

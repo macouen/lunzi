@@ -3,6 +3,7 @@ package com.oakzmm.demoapp.network;
 
 import android.content.Context;
 
+import com.google.gson.Gson;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.MediaType;
@@ -25,32 +26,32 @@ import okio.Source;
 
 
 /**
- * DemoApp
- * Created by OakZmm
+ * PatrolDev
+ * Created by acer_april
  * on 2016/3/14
  * Description:
- * 用法同HttpClientRequest，调用getInstance初始化。
- * ！！！注意
- * 1.callback 的回调 非 UI线程,请注意处理。
- * 2.需要自己解析Response数据，暂不支持解析为JavaBean，解析方法以Gson为例：
- * new Gson().fromJson(response.body().string(),Bean.class);
+ * <p/>
+ * 用法同HttpClientRequest，
+ * 注意
+ * 1.callback 的回调非UI线程；
+ * 2.需要自己解析Response数据，暂不支持解析为JavaBean，解析方法  new Gson().fromJson( response.body().string(),Bean.class);
  */
 public class UploadFileRequest {
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
     private static Context mContext;
-    private OkHttpClient mOkHttpClient;
-    private Call call;
-    //todo replace with your upload url
-    private String url = RequestConstant.UPLOAD_FILE;
+    public OkHttpClient mOkHttpClient;
+//    public Call call;
+//    private String url = RequestConstant.UPLOAD_FILE;
 
     private UploadFileRequest() {
         mOkHttpClient = new OkHttpClient();
     }
 
     public static UploadFileRequest getInstance(Context context) {
-        mContext = context;
+        // it keeps you from leaking the Activity or BroadcastReceiver if someone passes one in.
+        mContext = context.getApplicationContext();
         return ClientHolder.CLIENT_REQUEST;
     }
 
@@ -90,26 +91,27 @@ public class UploadFileRequest {
         return mOkHttpClient;
     }
 
+
     /**
      * 上传单个文件
      *
-     * @param json     upload params
+     * @param url      upload url
+     * @param clazz    upload params
      * @param file     upload file
      * @param callback callback
      */
-    public void uoloadFile(String json, File file, UploadCallback callback) {
-
-//        RequestBody body = RequestBody.create(JSON, json);
-        final MediaType type = MediaType.parse(guessMimeType(file.getName()));
-        final RequestBody body = createCustomRequestBody(type, file, callback);
-
-        RequestBody requestBody = new MultipartBuilder()
-                .type(MultipartBuilder.FORM)
-                        //todo add params if do not need, remove this part
-                .addFormDataPart(RequestConstant.UPLOAD_KEY_JSON, json)
-                        // add file
-                .addFormDataPart(RequestConstant.UPLOAD_KEY_FILE, file.getName(), body)
-                .build();
+    public void uploadFile(String url, Object clazz, File file, UploadCallback callback) {
+        final MultipartBuilder builder = new MultipartBuilder().type(MultipartBuilder.FORM);
+        // add params
+        String json = new Gson().toJson(clazz);
+        builder.addFormDataPart(RequestConstant.UPLOAD_KEY_JSON, json);
+        // add file
+        if (file != null) {
+            final MediaType type = MediaType.parse(guessMimeType(file.getName()));
+            final RequestBody body = createCustomRequestBody(type, file, callback);
+            builder.addFormDataPart(RequestConstant.UPLOAD_KEY_FILE, file.getName(), body);
+        }
+        RequestBody requestBody = builder.build();
 
         newRequestCall(callback, url, requestBody);
     }
@@ -117,12 +119,13 @@ public class UploadFileRequest {
     /**
      * 上传多个文件
      *
-     * @param json     upload params
+     * @param url      upload url
+     * @param clazz    upload params
      * @param files    upload files
      * @param callback callback
      */
-    public void uploadFiles(String json, List<File> files, UploadCallback callback) {
-        newRequestCall(callback, url, buildRequestBody(json, files, callback));
+    public void uploadFiles(String url, Object clazz, List<File> files, UploadCallback callback) {
+        newRequestCall(callback, url, buildRequestBody(clazz, files, callback));
     }
 
     private void newRequestCall(Callback callback, String url, RequestBody requestBody) {
@@ -130,62 +133,44 @@ public class UploadFileRequest {
                 .url(url)
                 .post(requestBody)
                 .build();
-        call = mOkHttpClient.newCall(request);
+        Call  call = mOkHttpClient.newCall(request);
         call.enqueue(callback);
     }
 
-    protected RequestBody buildRequestBody(String json, List<File> files, UploadCallback callback) {
-        MultipartBuilder builder = new MultipartBuilder()
-                .type(MultipartBuilder.FORM);
-        //todo add params if do not need, remove this part
+    protected RequestBody buildRequestBody(Object clazz, List<File> files, UploadCallback callback) {
+        MultipartBuilder builder = new MultipartBuilder().type(MultipartBuilder.FORM);
+        String json = new Gson().toJson(clazz);
+        // add params
         builder.addFormDataPart(RequestConstant.UPLOAD_KEY_JSON, json);
         //add file
-        for (int i = 0; i < files.size(); i++) {
-            File fileInput = files.get(i);
-            final MediaType type = MediaType.parse(guessMimeType(fileInput.getName()));
-            final RequestBody fileBody = createCustomRequestBody(type, fileInput, callback);
-            builder.addFormDataPart(RequestConstant.UPLOAD_KEY_FILE, fileInput.getName(), fileBody);
+        if (files != null) {
+            int count = files.size();
+            for (int i = 0; i < count; i++) {
+                File fileInput = files.get(i);
+                final MediaType type = MediaType.parse(guessMimeType(fileInput.getName()));
+                final RequestBody fileBody = createCustomRequestBody(type, fileInput, callback);
+                builder.addFormDataPart(RequestConstant.UPLOAD_KEY_FILE, fileInput.getName(), fileBody);
+            }
         }
         return builder.build();
     }
 
-    /**
-     * setConnectTimeout
-     *
-     * @param timeout timeout
-     * @param units   units
-     */
     public void setConnectTimeout(int timeout, TimeUnit units) {
         getOkHttpClient().setConnectTimeout(timeout, units);
     }
 
-    /**
-     * setReadTimeout
-     *
-     * @param timeout timeout
-     * @param units   units
-     */
     public void setReadTimeout(int timeout, TimeUnit units) {
         getOkHttpClient().setReadTimeout(timeout, units);
     }
 
-    /**
-     * setWriteTimeout
-     *
-     * @param timeout timeout
-     * @param units   units
-     */
     public void setWriteTimeout(int timeout, TimeUnit units) {
         getOkHttpClient().setWriteTimeout(timeout, units);
     }
 
-    /**
-     * cancelCall
-     */
-    public void cancelCall() {
-        if (call != null)
-            call.cancel();
-    }
+//    public void cancelCall() {
+//        if (call != null)
+//            call.cancel();
+//    }
 
     private String guessMimeType(String path) {
         FileNameMap fileNameMap = URLConnection.getFileNameMap();

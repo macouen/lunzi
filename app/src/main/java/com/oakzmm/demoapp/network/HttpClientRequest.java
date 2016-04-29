@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class HttpClientRequest {
 
-    private static Context mCtx;
+    private static Context sContext;
     public RequestQueue mRequestQueue;
 
     private HttpClientRequest() {
@@ -26,7 +26,7 @@ public class HttpClientRequest {
     }
 
     public static HttpClientRequest getInstance(Context context) {
-        mCtx = context;
+        sContext = context.getApplicationContext();
         return ClientHolder.CLIENT_REQUEST;
     }
     private static class ClientHolder {
@@ -53,7 +53,7 @@ public class HttpClientRequest {
             // getApplicationContext() is key, it keeps you from leaking the
             // Activity or BroadcastReceiver if someone passes one in.
             // use  custom okhttpStack, make better work .
-            mRequestQueue = Volley.newRequestQueue(mCtx.getApplicationContext(),
+            mRequestQueue = Volley.newRequestQueue(sContext.getApplicationContext(),
                     new OkHttpStack());
         }
         return mRequestQueue;

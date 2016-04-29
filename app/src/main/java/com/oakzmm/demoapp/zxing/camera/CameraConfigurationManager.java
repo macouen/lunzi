@@ -174,8 +174,6 @@ final class CameraConfigurationManager {
         //setSharpness(parameters);
         //modify here
 
-//    camera.setDisplayOrientation(90);
-        //����2.1
         setDisplayOrientation(camera, 90);
         camera.setParameters(parameters);
     }

@@ -39,8 +39,8 @@ public final class CameraManager {
 
     static final int SDK_INT; // Later we can use Build.VERSION.SDK_INT
     private static final String TAG = CameraManager.class.getSimpleName();
-    private static int MIN_FRAME_WIDTH = 240;
-    private static int MIN_FRAME_HEIGHT = 240;
+    private static int MIN_FRAME_WIDTH = 200;
+    private static int MIN_FRAME_HEIGHT = 200;
     private static int MAX_FRAME_WIDTH = 480;
     private static int MAX_FRAME_HEIGHT = 360;
     private static CameraManager cameraManager;
@@ -225,7 +225,7 @@ public final class CameraManager {
             if (camera == null) {
                 return null;
             }
-            int width = screenResolution.x * 5 / 8;
+            int width = screenResolution.x / 2;
             if (width < MIN_FRAME_WIDTH) {
                 width = MIN_FRAME_WIDTH;
             } else if (width > MAX_FRAME_WIDTH) {
@@ -238,7 +238,7 @@ public final class CameraManager {
                 height = MAX_FRAME_HEIGHT;
             }
             int leftOffset = (screenResolution.x - width) / 2;
-            int topOffset = (screenResolution.y - height) / 2;
+            int topOffset = (screenResolution.y - height) / 2 - 30;
             framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
             Log.d(TAG, "Calculated framing rect: " + framingRect);
         }
@@ -251,10 +251,19 @@ public final class CameraManager {
      */
     public Rect getFramingRectInPreview() {
         if (framingRectInPreview == null) {
-            Rect rect = new Rect(getFramingRect());
+            Rect framingRect = getFramingRect();
+            if (framingRect == null) {
+                return null;
+            }
+            Rect rect = new Rect(framingRect);
             Point cameraResolution = configManager.getCameraResolution();
             Point screenResolution = configManager.getScreenResolution();
-            //modify here
+
+            if (cameraResolution == null || screenResolution == null) {
+                // Called early, before init even finished
+                return null;
+            }
+            //modify  org  here
 //      rect.left = rect.left * cameraResolution.x / screenResolution.x;
 //      rect.right = rect.right * cameraResolution.x / screenResolution.x;
 //      rect.top = rect.top * cameraResolution.y / screenResolution.y;

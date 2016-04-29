@@ -25,6 +25,7 @@ import java.io.IOException;
  * 2. 压缩图片（处理大图）
  * 3. 处理成圆角图
  * 4. 处理成圆形图
+ * 5. 缩放bitmap
  */
 public class BitmapUtil {
 
@@ -306,11 +307,25 @@ public class BitmapUtil {
     }
 
     /**
+     * 缩放Bitmap图片
+     **/
+    public static Bitmap zoomBitmap(Bitmap bitmap, int width, int height) {
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+        Matrix matrix = new Matrix();
+        float scaleWidth = ((float) width / w);
+        float scaleHeight = ((float) height / h);
+        matrix.postScale(scaleWidth, scaleHeight);// 利用矩阵进行缩放不会造成内存溢出
+        Bitmap newbmp = Bitmap.createBitmap(bitmap, 0, 0, w, h, matrix, true);
+        return newbmp;
+    }
+
+    /**
      * 转换图片成圆形
      *
      * @param bitmap 传入Bitmap对象
      */
-    public Bitmap toRoundBitmap(Bitmap bitmap) {
+    public static Bitmap toRoundBitmap(Bitmap bitmap) {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
         float roundPx;

@@ -100,20 +100,31 @@ public class CustomRequest<T> extends Request<T> {
         }
     }
 
+    /**
+     * Returns the content type of the POST or PUT body.
+     */
     @Override
     public String getBodyContentType() {
-        return PROTOCOL_CONTENT_TYPE;
+        if (mRequestBody == null) {
+            return super.getBodyContentType();
+        }else{
+            return PROTOCOL_CONTENT_TYPE;
+        }
     }
 
     @Override
-    public byte[] getBody() {
-        try {
-            return mRequestBody == null ? null : mRequestBody.getBytes(PROTOCOL_CHARSET);
-        } catch (UnsupportedEncodingException uee) {
-            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s",
-                    mRequestBody, PROTOCOL_CHARSET);
-            return null;
+    public byte[] getBody() throws AuthFailureError {
+        if (mRequestBody == null) {
+            return super.getBody();
+        } else {
+            try {
+                return mRequestBody.getBytes(PROTOCOL_CHARSET);
+            } catch (UnsupportedEncodingException uee) {
+                VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, PROTOCOL_CHARSET);
+                return null;
+            }
         }
+
     }
 
     @Override
@@ -188,11 +199,6 @@ public class CustomRequest<T> extends Request<T> {
 
         public RequestBuilder post() {
             this.method = Method.POST;
-            return this;
-        }
-
-        public RequestBuilder method(int method) {
-            this.method = method;
             return this;
         }
 

@@ -43,11 +43,10 @@ public class WheelViewActivity extends AppCompatActivity {
                 OakLog.d("onItemClick: " + index);
             }
         });
-
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wheelView.setItems(Arrays.asList(PLANETS_TOW));
+                    wheelView.setItems(Arrays.asList(PLANETS_TOW));
             }
         });
 

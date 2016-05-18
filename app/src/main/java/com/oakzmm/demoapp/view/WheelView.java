@@ -178,7 +178,7 @@ public class WheelView extends ScrollView {
         final TextView tv = new TextView(context);
         tv.setLayoutParams(new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
+                DensityUtil.dip2px(context,50)));
         tv.setSingleLine(true);
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
         tv.setText(item);
@@ -186,7 +186,8 @@ public class WheelView extends ScrollView {
         int padding = DensityUtil.dip2px(context, 10);
         tv.setPadding(padding, padding, padding, padding);
         if (0 == itemHeight) {
-            itemHeight = DensityUtil.getViewMeasuredHeight(tv);
+//            itemHeight = DensityUtil.getViewMeasuredHeight(tv);
+            itemHeight = DensityUtil.dip2px(context,50);
             views.setLayoutParams(new LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, itemHeight
                     * displayItemCount));
@@ -232,8 +233,10 @@ public class WheelView extends ScrollView {
             }
             if (position == i) {
                 itemView.setTextColor(Color.parseColor("#0288ce"));
+                itemView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
             } else {
                 itemView.setTextColor(Color.parseColor("#bbbbbb"));
+                itemView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
             }
         }
     }
@@ -297,8 +300,7 @@ public class WheelView extends ScrollView {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        // Logger.d(TAG, "w: " + w + ", h: " + h + ", oldw: " + oldw +
-        // ", oldh: " + oldh);
+         Log.d(TAG, "w: " + w + ", h: " + h + ", oldw: " + oldw + ", oldh: " + oldh);
         viewWidth = w;
         setBackground(null);
     }

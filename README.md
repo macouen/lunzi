@@ -50,9 +50,12 @@
 
 > 2016-02-24  更新：添加 转换params为`json`格式的`post`请求，使用方法见demo。  
 > 2016-03-29  更新：添加 直接使用`json`格式的数据请求。  
-> 2016-03-29  更新：添加 使用okHttp封装文件上传的Request，并添加**progress 回调**，具体使用请见 `UploadFileRequest.java`。   
+> 2016-03-29  更新：添加 使用OkHttp封装**文件上传**的Request，并添加**progress 回调**（回调**非UI线程**，请在使用自行用Handler处理），具体使用请见 `UploadFileRequest.java`。   
 > 2016-04-29  更新：优化 文件上传方法，修复 存在的可能导致**内存泄露**的问题。   
 > 2016-05-18  更新：**修复**由于添加json格式请求导致的正常post请求异常的问题。
+> 2017-01-06  更新：添加 使用OkHttp封装的**文件下载**的Request，并添加**progress 回调**（回调**非UI线程**，请在使用自行用Handler处理），具体使用请见 `UploadFileRequest.java`。   
+> 2017-01-06  更新：添加 将配置好参数的**post请求转换为get请求**，使用方法以及注意事项见demo。
+> 2017-01-06  更新：添加 在网络没有连接的情况下 `NoConnectionError`，返回最近一次的**请求缓存**。用于没有网络的情况下，加载上一次的数据。注意，需要配合使用get请求，因为volley缓存的key是请求的url。与上一条配合使用效果最好。
 
 ### zxing -- 二维码扫描
 > 使用zxing实现的二维码扫描模块，修复了横竖屏以及预览界面图像拉伸的bug，优化了扫描界面的UI，仿微信二维码. 
@@ -60,7 +63,7 @@
 > 使用注意  
 > 需要复制`/values `下的`ids`文件，以及`colors`和`strings`文件中zxing部分的代码；  
 > 添加相机权限；  
-> 复制后，注意 `CaptureActivity`和`ViewfinderView`的包名。    
+> 复制后，注意 `CaptureActivity`和`ViewfinderView`的包名。
 
 ###  util -- 常用工具类
 #### `DensityUtil.java` 
@@ -69,7 +72,7 @@
 
 #### `BitmapUtil.java `
 
-> `Bitmap`处理工具 1. 旋转图片 2. 压缩图片（处理大图）3. 处理成圆角图 4. 处理成圆形图
+> `Bitmap`处理工具 1. 旋转图片 2. 压缩图片（处理大图）3. 处理成圆角图 4. 处理成圆形图 5. 缩放bitmap 6.Assert中获取bitmap
 
 #### `OakLog.java `
 
@@ -94,6 +97,31 @@
 #### `HexUtil.java`
 
 > 16进制值与String/Byte之间的转换
+
+#### `MathUtil.java`
+
+> 由于Java的简单类型不能够精确的对浮点数进行运算，这个工具类提供精确的浮点数运算，包括加减乘除和四舍五入。
+
+#### `QRCodeUtil.java`
+
+> 二维码生成工具类，支持添加中心Logo图。
+
+#### `MapLocationUtil.java`
+
+> 使用系统自带的定位进行定位的定位工具类。
+
+#### `PositionUtil.java`
+
+> Gps坐标转换工具类。
+>
+> 各地图API坐标系统比较与转换;
+ WGS84坐标系：即地球坐标系，国际上通用的坐标系。设备一般包含GPS芯片或者北斗芯片获取的经纬度为WGS84地理坐标系,
+ 谷歌地图采用的是WGS84地理坐标系（中国范围除外）;
+ GCJ02坐标系：即火星坐标系，是由中国国家测绘局制订的地理信息系统的坐标系统。由WGS84坐标系经加密后的坐标系。
+ 谷歌中国地图和搜搜中国地图采用的是GCJ02地理坐标系;
+ BD09坐标系：即百度坐标系，GCJ02坐标系经加密后的坐标系;
+ 搜狗坐标系、图吧坐标系等，估计也是在GCJ02基础上加密而成的。
+
 
 #### view -- 自定义View
 

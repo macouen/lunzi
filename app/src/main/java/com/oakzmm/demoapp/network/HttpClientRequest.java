@@ -29,9 +29,7 @@ public class HttpClientRequest {
         sContext = context.getApplicationContext();
         return ClientHolder.CLIENT_REQUEST;
     }
-    private static class ClientHolder {
-        private static final HttpClientRequest CLIENT_REQUEST = new HttpClientRequest();
-    }
+
     /**
      * Cancels all the request in the Volley queue for a given tag
      *
@@ -98,9 +96,9 @@ public class HttpClientRequest {
         CustomRequest request = new CustomRequest.RequestBuilder()
                 .post()//不设置的话默认GET 但是设置了参数就不需要了。。。
                 .url("")//url会统一配置到requestUrl类中 必填
-                        // 添加参数方法1 适用参数比较多的情况下
+                // 添加参数方法1 适用参数比较多的情况下
 //               .params(params)
-                        // 添加参数方法2
+                // 添加参数方法2
                 .addParams("param1", param1)//添加参数1
                 .addParams("param2", param2)//添加参数2
 //               .clazz(Test.calss) //如果设置了返回类型，会自动解析返回model(Gson解析) 如果不设置会直接返回json数据;
@@ -108,10 +106,12 @@ public class HttpClientRequest {
                 .errorListener(errorListener)//获取数据异常的listener
 //              .toJSON() //将add的params 转成json数据请求
 //                .JSONString(json) // 直接添加jsonString 为 requestBody，！！！不能再同时使用addParams/params的方法
+//                .forceGET(true)// 将配置好的请求强制转换为Get请求。 参数true，连接符从?开始，false 从&开始。
                 .build();
         addRequest(request, tag);
         //将请求add到队列中。并设置tag  并需要相应activity onStop方法中调用cancel方法
     }
+
     //Demo
     public void getWeatherData(Response.Listener listener,
                                Response.ErrorListener errorListener, String tag) {
@@ -122,6 +122,10 @@ public class HttpClientRequest {
                 .errorListener(errorListener)
                 .build();
         addRequest(request, tag);//将请求add到队列中。
+    }
+
+    private static class ClientHolder {
+        private static final HttpClientRequest CLIENT_REQUEST = new HttpClientRequest();
     }
 
 

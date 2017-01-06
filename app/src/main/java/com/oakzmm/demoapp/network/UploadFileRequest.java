@@ -2,6 +2,7 @@ package com.oakzmm.demoapp.network;
 
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.squareup.okhttp.Call;
@@ -11,9 +12,12 @@ import com.squareup.okhttp.MultipartBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.util.List;
@@ -23,6 +27,8 @@ import okio.Buffer;
 import okio.BufferedSink;
 import okio.Okio;
 import okio.Source;
+
+import static android.content.ContentValues.TAG;
 
 
 /**
@@ -128,12 +134,69 @@ public class UploadFileRequest {
         newRequestCall(callback, url, buildRequestBody(clazz, files, callback));
     }
 
+    /**
+     * 下载文件
+     *
+     * @param fileUrl download url
+     * @param file save file
+     * @param callback callback
+     */
+    public void downloadFile(String fileUrl, final File file, final DownloadCallback callback) {
+        if (file.exists()) {
+            callback.onProgress(1, 1, true);
+            return;
+        }
+        final Request request = new Request.Builder().url(fileUrl).build();
+        final Call call = mOkHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                InputStream is = null;
+                byte[] buf = new byte[2048];
+                int len = 0;
+                FileOutputStream fos = null;
+                try {
+                    long total = response.body().contentLength();
+                    long current = 0;
+                    is = response.body().byteStream();
+                    fos = new FileOutputStream(file);
+                    while ((len = is.read(buf)) != -1) {
+                        current += len;
+                        fos.write(buf, 0, len);
+                        callback.onProgress(total, current, current == total);
+                    }
+                    fos.flush();
+                } catch (IOException e) {
+                    Log.e(TAG, e.toString());
+                } finally {
+                    try {
+                        if (is != null) {
+                            is.close();
+                        }
+                        if (fos != null) {
+                            fos.close();
+                        }
+                    } catch (IOException e) {
+                        Log.e(TAG, e.toString());
+                    }
+                }
+            }
+
+
+        });
+    }
+
     private void newRequestCall(Callback callback, String url, RequestBody requestBody) {
         Request request = new Request.Builder()
                 .url(url)
                 .post(requestBody)
                 .build();
-        Call  call = mOkHttpClient.newCall(request);
+        Call call = mOkHttpClient.newCall(request);
         call.enqueue(callback);
     }
 

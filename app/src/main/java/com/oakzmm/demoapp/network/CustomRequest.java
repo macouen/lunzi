@@ -1,10 +1,16 @@
 package com.oakzmm.demoapp.network;
 
+import android.text.TextUtils;
+import android.util.Log;
+
 import com.android.volley.AuthFailureError;
+import com.android.volley.Cache;
 import com.android.volley.NetworkResponse;
+import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
@@ -107,7 +113,7 @@ public class CustomRequest<T> extends Request<T> {
     public String getBodyContentType() {
         if (mRequestBody == null) {
             return super.getBodyContentType();
-        }else{
+        } else {
             return PROTOCOL_CONTENT_TYPE;
         }
     }
@@ -142,11 +148,37 @@ public class CustomRequest<T> extends Request<T> {
         listener.onResponse(response);
     }
 
+    /*
+     * 没有网的情况也是出现了异常，然后就会调用到deliverError
+     * 在使用get请求的情况下 getCacheEntry 能获取到最近一次的请求缓存。
+     *
+     *  ！！注意！！： 只是获取最近一次的请求缓存，自定义的数据获取失败和成功并不能识别。
+     *
+     */
+    @Override
+    public void deliverError(VolleyError error) {
+        Log.i("CustomRequest", "deliverError----" + error.getMessage());
+        if (error instanceof NoConnectionError && mRequestBody == null) {
+            Cache.Entry entry = this.getCacheEntry();
+            if (entry != null) {
+                Log.d("CustomRequest", " deliverError--------:  " + new String(entry.data));
+                if (entry.data != null && entry.responseHeaders != null) {
+                    Response<T> response = parseNetworkResponse(new NetworkResponse(entry.data, entry.responseHeaders));
+                    if (response.result != null) {
+                        deliverResponse(response.result);
+                        return;
+                    }
+                }
+            }
+        }
+        super.deliverError(error);
+    }
+
     @Override
     protected Response<T> parseNetworkResponse(NetworkResponse response) {
         String parsed;
         try {
-            parsed = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+            parsed = new String(response.data, HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));
             if (clazz == null) {
                 return (Response<T>) Response.success(parsed,
                         HttpHeaderParser.parseCacheHeaders(response));
@@ -236,13 +268,33 @@ public class CustomRequest<T> extends Request<T> {
             } else {
                 jsonObject = new JSONObject(params);
             }
-            requestBody = (jsonObject == null) ? null : jsonObject.toString();
+            this.requestBody = (jsonObject == null) ? null : jsonObject.toString();
             return this;
         }
 
         public RequestBuilder JSONString(String jsonBody) {
-            requestBody = jsonBody;
+            this.requestBody = jsonBody;
             post();
+            return this;
+        }
+
+        public RequestBuilder forceGET(boolean setMark) {
+            if (params != null && !TextUtils.isEmpty(url)) {
+                String temp = url;
+                int i = 0;
+                this.method = Method.GET;
+                this.requestBody = null;
+                for (Map.Entry<String, String> entry : params.entrySet()) {
+                    if (setMark && i == 0) {
+                        temp = temp + "?" + entry.getKey() + "=" + entry.getValue();
+                    } else {
+                        temp = temp + "&" + entry.getKey() + "=" + entry.getValue();
+                    }
+                    i++;
+                }
+                this.params = null;
+                this.url = temp;
+            }
             return this;
         }
 
